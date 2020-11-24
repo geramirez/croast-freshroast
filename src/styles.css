@@ -1,0 +1,12 @@
+#roastChart {
+  width: 6rem;
+  height: 6rem;
+}
+
+#controlLogs {
+  display: flex;
+}
+
+.container {
+  padding: 1rem;
+}
