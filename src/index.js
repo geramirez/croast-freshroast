@@ -2,7 +2,7 @@
 // The MiniCssExtractPlugin is used to separate it out into
 // its own CSS file.
 import "./styles.css";
-import 'purecss'
+import "milligram"
 
 import Chart from "chart.js";
 import { Timer } from "easytimer.js";
@@ -11,11 +11,11 @@ document
   .querySelector("#export .downloadButton")
   .addEventListener("click", () => {
     download_csv();
-  }); 
+  });
 
 let FAN, HEAT, TEMPERATURE, BEAN_TEMPERATURE;
 document
-  .querySelector("#controlLogs .recordTelemetry")
+  .querySelector("#recordTelemetry")
   .addEventListener("click", (e) => {
     e.preventDefault()
     FAN = parseInt(document.getElementById("fan").value);
@@ -54,7 +54,7 @@ document
       myLineChart.data.datasets[0].pointRadius.push(3);
       myLineChart.data.datasets[0].pointBackgroundColor.push("blue");
     }
-    
+
     myLineChart.update();
 
   });
@@ -146,25 +146,19 @@ document
 
 firstCrackTimer.addEventListener("start", () => {
   document.querySelector(
-    "#firstCrackTimer .values"
-  ).innerHTML = firstCrackTimer.getTimeValues().toString();
+    "#developmentPercent"
+  ).innerHTML = "0%";
 })
 
 firstCrackTimer.addEventListener("secondsUpdated", () => {
   document.querySelector(
-    "#firstCrackTimer .values"
-  ).innerHTML = firstCrackTimer.getTimeValues().toString();
-  document.querySelector(
-    "#firstCrackTimer .percent"
+    "#developmentPercent"
   ).innerHTML = `${(100 * (new Date() - FC_TIME) / (FC_TIME - START_TIME)).toFixed()}%`
 });
 
 firstCrackTimer.addEventListener("reset", () => {
   document.querySelector(
-    "#firstCrackTimer .values"
-  ).innerHTML = firstCrackTimer.getTimeValues().toString();
-  document.querySelector(
-    "#firstCrackTimer .percent"
+    "#developmentPercent"
   ).innerHTML = "0%";
 });
 
@@ -199,10 +193,7 @@ document.querySelector("#timer .resetButton").addEventListener("click", () => {
   mainTimer.stop();
 
   document.querySelector(
-    "#firstCrackTimer .values"
-  ).innerHTML = firstCrackTimer.getTimeValues().toString();
-  document.querySelector(
-    "#firstCrackTimer .percent"
+    "#developmentPercent"
   ).innerHTML = "0%";
 
   CSV_DATA = "Time,BeanTemperature,FC,FAN,HEAT,TEMPERATURE\n";
@@ -213,19 +204,19 @@ document.querySelector("#timer .resetButton").addEventListener("click", () => {
 
 mainTimer.addEventListener("secondsUpdated", () => {
   document.querySelector(
-    "#timer .values"
+    "#roastTime"
   ).innerHTML = mainTimer.getTimeValues().toString();
 });
 
 mainTimer.addEventListener("started", () => {
   document.querySelector(
-    "#timer .values"
+    "#roastTime"
   ).innerHTML = mainTimer.getTimeValues().toString();
 });
 
 mainTimer.addEventListener("reset", () => {
   document.querySelector(
-    "#timer .values"
+    "#roastTime"
   ).innerHTML = mainTimer.getTimeValues().toString();
 });
 

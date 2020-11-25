@@ -24,7 +24,6 @@
   "dependencies": {
     "chart.js": "^2.9.4",
     "easytimer.js": "^4.3.1",
-    "foundation-sites": "^6.6.3",
-    "purecss": "^2.0.3"
+    "milligram": "^1.4.1"
   }
 }

@@ -1,12 +1,21 @@
 #roastChart {
-  width: 6rem;
-  height: 6rem;
+  width: 100em;
+  height: 100em;
 }
 
 #controlLogs {
   display: flex;
 }
 
-.container {
-  padding: 1rem;
+#recordTelemetry {
+  min-width: 100em;
+}
+
+body {
+  background-color: #F0F3F5;
+}
+
+.button-custom {
+  background-color: black;
+  border-color: black;
 }
