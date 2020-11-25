@@ -16,14 +16,12 @@ document
 let FAN, HEAT, TEMPERATURE, BEAN_TEMPERATURE;
 document
   .querySelector("#recordTelemetry")
-  .addEventListener("click", (e) => {
-    e.preventDefault()
+  .addEventListener("click", () => {
     FAN = parseInt(document.getElementById("fan").value);
     HEAT = parseInt(document.getElementById("heat").value);
     TEMPERATURE = parseInt(document.getElementById("temperature").value);
     BEAN_TEMPERATURE = parseInt(document.getElementById("beanTemperature").value);
     const timestamp = new Date()
-
     myLineChart.data.datasets[0].data.push({
       t: timestamp,
       y: BEAN_TEMPERATURE,
@@ -41,8 +39,6 @@ document
       t: timestamp,
       y: TEMPERATURE,
     });
-
-
 
     CSV_DATA += `${timestamp},${BEAN_TEMPERATURE},${FIRST_CRACK},${FAN},${HEAT},${TEMPERATURE}\n`;
 
@@ -140,6 +136,37 @@ document
   .addEventListener("click", () => {
     firstCrackTimer.start();
     FIRST_CRACK = true;
+    FAN = parseInt(document.getElementById("fan").value);
+    HEAT = parseInt(document.getElementById("heat").value);
+    TEMPERATURE = parseInt(document.getElementById("temperature").value);
+    BEAN_TEMPERATURE = parseInt(document.getElementById("beanTemperature").value);
+    const timestamp = new Date()
+    myLineChart.data.datasets[0].data.push({
+      t: timestamp,
+      y: BEAN_TEMPERATURE,
+    });
+
+    myLineChart.data.datasets[1].data.push({
+      t: timestamp,
+      y: FAN,
+    });
+    myLineChart.data.datasets[2].data.push({
+      t: timestamp,
+      y: HEAT,
+    });
+    myLineChart.data.datasets[3].data.push({
+      t: timestamp,
+      y: TEMPERATURE,
+    });
+
+
+    CSV_DATA += `${timestamp},${BEAN_TEMPERATURE},${FIRST_CRACK},${FAN},${HEAT},${TEMPERATURE}\n`;
+    FIRST_CRACK = false
+    myLineChart.data.datasets[0].pointRadius.push(5);
+    myLineChart.data.datasets[0].pointBackgroundColor.push("red");
+
+    myLineChart.update();
+
     FC_TIME = new Date()
     document.querySelector('#firstCrackTimer .recordButton').style.display = "none";
   });
