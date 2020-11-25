@@ -22,18 +22,19 @@ document
     TEMPERATURE = parseInt(document.getElementById("temperature").value);
     BEAN_TEMPERATURE = parseInt(document.getElementById("beanTemperature").value);
     const timestamp = new Date()
-    myLineChart.data.datasets[0].data.push({
-      t: timestamp,
-      y: BEAN_TEMPERATURE,
-    });
 
-    myLineChart.data.datasets[1].data.push({
+
+    myLineChart.data.datasets[0].data.push({
       t: timestamp,
       y: FAN,
     });
-    myLineChart.data.datasets[2].data.push({
+    myLineChart.data.datasets[1].data.push({
       t: timestamp,
       y: HEAT,
+    });
+    myLineChart.data.datasets[2].data.push({
+      t: timestamp,
+      y: BEAN_TEMPERATURE,
     });
     myLineChart.data.datasets[3].data.push({
       t: timestamp,
@@ -43,12 +44,12 @@ document
     CSV_DATA += `${timestamp},${BEAN_TEMPERATURE},${FIRST_CRACK},${FAN},${HEAT},${TEMPERATURE}\n`;
 
     if (FIRST_CRACK) {
-      myLineChart.data.datasets[0].pointRadius.push(5);
-      myLineChart.data.datasets[0].pointBackgroundColor.push("red");
+      myLineChart.data.datasets[2].pointRadius.push(5);
+      myLineChart.data.datasets[2].pointBackgroundColor.push("red");
       FIRST_CRACK = false;
     } else {
-      myLineChart.data.datasets[0].pointRadius.push(3);
-      myLineChart.data.datasets[0].pointBackgroundColor.push("blue");
+      myLineChart.data.datasets[2].pointRadius.push(3);
+      myLineChart.data.datasets[2].pointBackgroundColor.push("blue");
     }
 
     myLineChart.update();
@@ -112,8 +113,8 @@ const myLineChart = new Chart(ctx, {
             display: true,
             labelString: 'Temperature',
             fontColor: '#000000',
-            fontSize:10
-        },
+            fontSize: 10
+          },
           ticks: { min: 0, max: 550, },
         },
         {
@@ -124,8 +125,8 @@ const myLineChart = new Chart(ctx, {
             display: true,
             labelString: 'Fan/Power',
             fontColor: '#000000',
-            fontSize:10
-        },
+            fontSize: 10
+          },
         },
       ],
     },
@@ -147,19 +148,20 @@ document
     TEMPERATURE = parseInt(document.getElementById("temperature").value);
     BEAN_TEMPERATURE = parseInt(document.getElementById("beanTemperature").value);
     const timestamp = new Date()
+
     myLineChart.data.datasets[0].data.push({
+      t: timestamp,
+      y: FAN,
+    });
+    myLineChart.data.datasets[1].data.push({
+      t: timestamp,
+      y: HEAT,
+    });
+    myLineChart.data.datasets[2].data.push({
       t: timestamp,
       y: BEAN_TEMPERATURE,
     });
 
-    myLineChart.data.datasets[1].data.push({
-      t: timestamp,
-      y: FAN,
-    });
-    myLineChart.data.datasets[2].data.push({
-      t: timestamp,
-      y: HEAT,
-    });
     myLineChart.data.datasets[3].data.push({
       t: timestamp,
       y: TEMPERATURE,
@@ -168,8 +170,8 @@ document
 
     CSV_DATA += `${timestamp},${BEAN_TEMPERATURE},${FIRST_CRACK},${FAN},${HEAT},${TEMPERATURE}\n`;
     FIRST_CRACK = false
-    myLineChart.data.datasets[0].pointRadius.push(5);
-    myLineChart.data.datasets[0].pointBackgroundColor.push("red");
+    myLineChart.data.datasets[2].pointRadius.push(5);
+    myLineChart.data.datasets[2].pointBackgroundColor.push("red");
 
     myLineChart.update();
 
