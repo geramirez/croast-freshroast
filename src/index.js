@@ -107,19 +107,19 @@ const myLineChart = new Chart(ctx, {
       yAxes: [
         {
           id: "bean",
-          ticks: { min: 0, max: 600, },
+          ticks: { min: 0, max: 550, },
         },
         {
           id: "fan",
-          ticks: { min: 0, max: 10, stepSize: 1 },
+          ticks: { min: 0, max: 20, stepSize: 1 },
         },
         {
           id: "power",
-          ticks: { min: 0, max: 10, stepSize: 1 },
+          ticks: { min: 0, max: 20, stepSize: 1 },
         },
         {
           id: "envTemp",
-          ticks: { min: 0, max: 600, },
+          ticks: { min: 0, max: 550, },
         },
       ],
     },
