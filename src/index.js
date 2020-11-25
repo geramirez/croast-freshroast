@@ -62,8 +62,22 @@ const myLineChart = new Chart(ctx, {
     datasets: [
       {
         data: [],
+        label: "Fan",
+        yAxisID: "fan-power",
+        borderColor: "green",
+        fill: false,
+      },
+      {
+        data: [],
+        label: "Power",
+        yAxisID: "fan-power",
+        borderColor: "black",
+        fill: false,
+      },
+      {
+        data: [],
         label: "Bean Temperature",
-        yAxisID: "bean",
+        yAxisID: "temp",
         borderColor: "#3e95cd",
         fill: false,
         pointRadius: [],
@@ -71,22 +85,8 @@ const myLineChart = new Chart(ctx, {
       },
       {
         data: [],
-        label: "Fan",
-        yAxisID: "fan",
-        borderColor: "green",
-        fill: false,
-      },
-      {
-        data: [],
-        label: "Power",
-        yAxisID: "power",
-        borderColor: "black",
-        fill: false,
-      },
-      {
-        data: [],
         label: "Env. Temperature",
-        yAxisID: "envTemp",
+        yAxisID: "temp",
         borderColor: "purple",
         fill: false,
       },
@@ -106,20 +106,26 @@ const myLineChart = new Chart(ctx, {
       ],
       yAxes: [
         {
-          id: "bean",
+          id: "temp",
+          position: 'left',
+          scaleLabel: {
+            display: true,
+            labelString: 'Temperature',
+            fontColor: '#000000',
+            fontSize:10
+        },
           ticks: { min: 0, max: 550, },
         },
         {
-          id: "fan",
+          id: "fan-power",
           ticks: { min: 0, max: 20, stepSize: 1 },
+          position: 'right',
+          scaleLabel: {
+            display: true,
+            labelString: 'Fan/Power',
+            fontColor: '#000000',
+            fontSize:10
         },
-        {
-          id: "power",
-          ticks: { min: 0, max: 20, stepSize: 1 },
-        },
-        {
-          id: "envTemp",
-          ticks: { min: 0, max: 550, },
         },
       ],
     },
