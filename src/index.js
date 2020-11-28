@@ -14,6 +14,7 @@ document
   });
 
 let FAN, HEAT, TEMPERATURE, BEAN_TEMPERATURE;
+let LAST_BEAN_TEMP = 0;
 document
   .querySelector("#recordTelemetry")
   .addEventListener("click", () => {
@@ -40,6 +41,12 @@ document
       t: timestamp,
       y: TEMPERATURE,
     });
+    myLineChart.data.datasets[4].data.push({
+      t: timestamp,
+      y: BEAN_TEMPERATURE - LAST_BEAN_TEMP,
+    });
+
+    LAST_BEAN_TEMP = BEAN_TEMPERATURE 
 
     CSV_DATA += `${timestamp},${BEAN_TEMPERATURE},${FIRST_CRACK},${FAN},${HEAT},${TEMPERATURE}\n`;
 
@@ -65,21 +72,21 @@ const myLineChart = new Chart(ctx, {
         data: [],
         label: "Fan",
         yAxisID: "fan-power",
-        borderColor: "green",
+        borderColor: "blue",
         fill: false,
       },
       {
         data: [],
         label: "Power",
         yAxisID: "fan-power",
-        borderColor: "black",
+        borderColor: "orange",
         fill: false,
       },
       {
         data: [],
         label: "Bean Temperature",
         yAxisID: "temp",
-        borderColor: "#3e95cd",
+        borderColor: "black",
         fill: false,
         pointRadius: [],
         pointBackgroundColor: [],
@@ -89,6 +96,13 @@ const myLineChart = new Chart(ctx, {
         label: "Env. Temperature",
         yAxisID: "temp",
         borderColor: "purple",
+        fill: false,
+      },
+      {
+        data: [],
+        label: "ROR",
+        yAxisID: "ror",
+        borderColor: "red",
         fill: false,
       },
     ],
@@ -116,6 +130,16 @@ const myLineChart = new Chart(ctx, {
             fontSize: 10
           },
           ticks: { min: 0, max: 550, },
+        },
+        {
+          id: "ror",
+          position: 'left',
+          scaleLabel: {
+            display: true,
+            labelString: 'Bean Mass ROR',
+            fontColor: '#000000',
+            fontSize: 10
+          },
         },
         {
           id: "fan-power",
@@ -166,6 +190,11 @@ document
       t: timestamp,
       y: TEMPERATURE,
     });
+    myLineChart.data.datasets[4].data.push({
+      t: timestamp,
+      y: BEAN_TEMPERATURE - LAST_BEAN_TEMP,
+    });
+    LAST_BEAN_TEMP = BEAN_TEMPERATURE;
 
 
     CSV_DATA += `${timestamp},${BEAN_TEMPERATURE},${FIRST_CRACK},${FAN},${HEAT},${TEMPERATURE}\n`;
@@ -202,9 +231,37 @@ let COLLECTION_STARTED = false;
 document.querySelector("#timer .startButton").addEventListener("click", () => {
   mainTimer.start();
   START_TIME = new Date()
+  FAN = parseInt(document.getElementById("fan").value) || 0;
+  HEAT = parseInt(document.getElementById("heat").value) || 0;
   COLLECTION_STARTED = true;
   FIRST_CRACK = false;
   FC_TIME = 0;
+  
+
+  myLineChart.data.datasets[0].data.push({
+    t: START_TIME,
+    y: FAN,
+  });
+  myLineChart.data.datasets[1].data.push({
+    t: START_TIME,
+    y: HEAT,
+  });
+  myLineChart.data.datasets[2].data.push({
+    t: START_TIME,
+    y: 0,
+  });
+
+  myLineChart.data.datasets[3].data.push({
+    t: START_TIME,
+    y: 0,
+  });
+  myLineChart.data.datasets[4].data.push({
+    t: START_TIME,
+    y: 0,
+  });
+
+  myLineChart.update()
+
   document.querySelector('#timer .startButton').style.display = "none";
   document.querySelector('#timer .stopButton').style.display = "inline";
 });
@@ -223,6 +280,8 @@ document.querySelector("#timer .resetButton").addEventListener("click", () => {
   myLineChart.data.datasets[1].data = [];
   myLineChart.data.datasets[2].data = [];
   myLineChart.data.datasets[3].data = [];
+  myLineChart.data.datasets[4].data = [];
+
   myLineChart.update();
   mainTimer.reset();
   mainTimer.stop();
