@@ -21,6 +21,19 @@ class _TelemetryFormState extends State<TelemetryForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          FlatButton(
+            onPressed: () {
+              if (_formKey.currentState.validate()) {
+                Provider.of<RoastTelemetryModel>(context, listen: false)
+                    .add(RoastMeasurement(new DateTime.now(), 0, 0, 0, 0));
+              }
+            },
+            child: Text('Record',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.white)),
+            minWidth: double.infinity,
+            color: Colors.brown,
+          ),
           TextFormField(
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(
@@ -85,20 +98,6 @@ class _TelemetryFormState extends State<TelemetryForm> {
               return null;
             },
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                // Validate will return true if the form is valid, or false if
-                // the form is invalid.
-                if (_formKey.currentState.validate()) {
-                  Provider.of<RoastTelemetryModel>(context, listen: false)
-                      .add(RoastMeasurement(new DateTime.now(), 0, 0, 0, 0));
-                }
-              },
-              child: Text('Record'),
-            ),
-          ),
         ],
       ),
     );
@@ -133,15 +132,18 @@ class RoastTelemetryModel extends ChangeNotifier {
 
   void startRoast() {
     _stopwatch.start();
+    notifyListeners();
   }
 
   void stopRoast() {
     _stopwatch.stop();
+    notifyListeners();
   }
 
   void newRoast() {
     _stage = 0;
     _stopwatch.reset();
+    notifyListeners();
   }
 
   bool roastInSession() {
@@ -163,11 +165,19 @@ class RoastTelemetryModel extends ChangeNotifier {
       firstCrack = _stopwatch.elapsedMilliseconds;
       print('first crack');
     }
+    notifyListeners();
+  }
+
+  int developmentPercent() {
+    if (!hitFirstCrack()) return 0;
+    return (100*(_stopwatch.elapsedMilliseconds - firstCrack)) ~/
+        (_stopwatch.elapsedMilliseconds);
   }
 
   void recordSecondCrack() {
     _stage = 2;
     secondCrack = _stopwatch.elapsedMilliseconds;
+    notifyListeners();
   }
 
   bool hitFirstCrack() {

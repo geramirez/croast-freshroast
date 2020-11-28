@@ -1,10 +1,8 @@
-
 import 'package:croast/roast_telemetry.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:provider/provider.dart';
-
 
 class ElapsedTime {
   final int hundreds;
@@ -18,87 +16,39 @@ class ElapsedTime {
   });
 }
 
-class Dependencies {
+class TimerWidget extends StatefulWidget {
+  TimerWidget({Key key}) : super(key: key);
+
+  TimerWidgetState createState() => new TimerWidgetState();
+}
+
+class TimerWidgetState extends State<TimerWidget> {
   final List<ValueChanged<ElapsedTime>> timerListeners =
       <ValueChanged<ElapsedTime>>[];
-  final TextStyle textStyle = const TextStyle(fontSize: 70.0);
-  final int timerMillisecondsRefreshRate = 30;
-}
-
-class TimerPage extends StatefulWidget {
-  TimerPage({Key key}) : super(key: key);
-
-  TimerPageState createState() => new TimerPageState();
-}
-
-class TimerPageState extends State<TimerPage> {
-  final Dependencies dependencies = new Dependencies();
-
-  void leftButtonPressed() {
-    setState(() {
-      final telmetry = Provider.of<RoastTelemetryModel>(context, listen: false);
-      if (telmetry.roastInSession()) {
-         telmetry.recordCrack();
-      } else {
-        telmetry.newRoast();
-
-      }
-    });
-  }
-
-  void rightButtonPressed() {
-    setState(() {
-      if (Provider.of<RoastTelemetryModel>(context, listen: false).roastInSession()) {
-        Provider.of<RoastTelemetryModel>(context, listen: false).stopRoast();
-      } else {
-        Provider.of<RoastTelemetryModel>(context, listen: false).startRoast();
-      }
-    });
-  }
-
-  Widget controlButtons(String text, callback) {
-    return FlatButton(child: new Text(text), onPressed: callback);
-  }
 
   @override
   Widget build(BuildContext context) {
-    return new Column(
-      children: <Widget>[
-        Row(children: [new TimerText(dependencies: dependencies)]),
-        Row(
-          children: [
-            controlButtons(
-                Provider.of<RoastTelemetryModel>(context, listen: false).roastInSession() ? "Record Crack" : "New Roast",
-                leftButtonPressed),
-            controlButtons(
-               Provider.of<RoastTelemetryModel>(context, listen: false).roastInSession() ? "Stop Roast" : "Start Roast",
-                rightButtonPressed),
-          ],
-        )
-      ],
-    );
+    return new TimerText(timerListeners: timerListeners);
   }
 }
 
 class TimerText extends StatefulWidget {
-  TimerText({this.dependencies});
-  final Dependencies dependencies;
+  TimerText({this.timerListeners});
+  final List<ValueChanged<ElapsedTime>> timerListeners;
 
   TimerTextState createState() =>
-      new TimerTextState(dependencies: dependencies);
+      new TimerTextState(timerListeners: timerListeners);
 }
 
 class TimerTextState extends State<TimerText> {
-  TimerTextState({this.dependencies});
-  final Dependencies dependencies;
+  TimerTextState({this.timerListeners});
+  final List<ValueChanged<ElapsedTime>> timerListeners;
   Timer timer;
   int milliseconds;
 
   @override
   void initState() {
-    timer = new Timer.periodic(
-        new Duration(milliseconds: dependencies.timerMillisecondsRefreshRate),
-        callback);
+    timer = new Timer.periodic(new Duration(milliseconds: 30), callback);
     super.initState();
   }
 
@@ -110,8 +60,10 @@ class TimerTextState extends State<TimerText> {
   }
 
   void callback(Timer timer) {
-    if (milliseconds != Provider.of<RoastTelemetryModel>(context, listen: false).roastTime()) {
-      milliseconds = Provider.of<RoastTelemetryModel>(context, listen: false).roastTime();
+    if (milliseconds !=
+        Provider.of<RoastTelemetryModel>(context, listen: false).roastTime()) {
+      milliseconds =
+          Provider.of<RoastTelemetryModel>(context, listen: false).roastTime();
       final int hundreds = (milliseconds / 10).truncate();
       final int seconds = (hundreds / 100).truncate();
       final int minutes = (seconds / 60).truncate();
@@ -120,7 +72,7 @@ class TimerTextState extends State<TimerText> {
         seconds: seconds,
         minutes: minutes,
       );
-      for (final listener in dependencies.timerListeners) {
+      for (final listener in this.timerListeners) {
         listener(elapsedTime);
       }
     }
@@ -134,13 +86,13 @@ class TimerTextState extends State<TimerText> {
         new RepaintBoundary(
           child: new SizedBox(
             height: 72.0,
-            child: new MinutesAndSeconds(dependencies: dependencies),
+            child: new MinutesAndSeconds(timerListeners: this.timerListeners),
           ),
         ),
         new RepaintBoundary(
           child: new SizedBox(
             height: 72.0,
-            child: new Hundreds(dependencies: dependencies),
+            child: new Hundreds(timerListeners: this.timerListeners),
           ),
         ),
       ],
@@ -149,23 +101,23 @@ class TimerTextState extends State<TimerText> {
 }
 
 class MinutesAndSeconds extends StatefulWidget {
-  MinutesAndSeconds({this.dependencies});
-  final Dependencies dependencies;
+  MinutesAndSeconds({this.timerListeners});
+  final List<ValueChanged<ElapsedTime>> timerListeners;
 
   MinutesAndSecondsState createState() =>
-      new MinutesAndSecondsState(dependencies: dependencies);
+      new MinutesAndSecondsState(timerListeners: timerListeners);
 }
 
 class MinutesAndSecondsState extends State<MinutesAndSeconds> {
-  MinutesAndSecondsState({this.dependencies});
-  final Dependencies dependencies;
+  MinutesAndSecondsState({this.timerListeners});
+  final List<ValueChanged<ElapsedTime>> timerListeners;
 
   int minutes = 0;
   int seconds = 0;
 
   @override
   void initState() {
-    dependencies.timerListeners.add(onTick);
+    this.timerListeners.add(onTick);
     super.initState();
   }
 
@@ -182,26 +134,28 @@ class MinutesAndSecondsState extends State<MinutesAndSeconds> {
   Widget build(BuildContext context) {
     String minutesStr = (minutes % 60).toString().padLeft(2, '0');
     String secondsStr = (seconds % 60).toString().padLeft(2, '0');
-    return new Text('$minutesStr:$secondsStr.', style: dependencies.textStyle);
+    return new Text('$minutesStr:$secondsStr.',
+        style: TextStyle(fontSize: 70.0));
   }
 }
 
 class Hundreds extends StatefulWidget {
-  Hundreds({this.dependencies});
-  final Dependencies dependencies;
+  Hundreds({this.timerListeners});
+  final List<ValueChanged<ElapsedTime>> timerListeners;
 
-  HundredsState createState() => new HundredsState(dependencies: dependencies);
+  HundredsState createState() =>
+      new HundredsState(timerListeners: timerListeners);
 }
 
 class HundredsState extends State<Hundreds> {
-  HundredsState({this.dependencies});
-  final Dependencies dependencies;
+  HundredsState({this.timerListeners});
+  final List<ValueChanged<ElapsedTime>> timerListeners;
 
   int hundreds = 0;
 
   @override
   void initState() {
-    dependencies.timerListeners.add(onTick);
+    this.timerListeners.add(onTick);
     super.initState();
   }
 
@@ -216,6 +170,6 @@ class HundredsState extends State<Hundreds> {
   @override
   Widget build(BuildContext context) {
     String hundredsStr = (hundreds % 100).toString().padLeft(2, '0');
-    return new Text(hundredsStr, style: dependencies.textStyle);
+    return new Text(hundredsStr, style: TextStyle(fontSize: 70.0));
   }
 }
